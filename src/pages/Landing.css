@@ -1,0 +1,11 @@
+.overlay {
+    opacity: 0.85;
+    width: 100vw;
+    height: 80vh;
+    z-index: -1;
+
+    background-image: url("../assets/background.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+  }

@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+
+import { Route, Routes } from "react-router-dom";
+
+import Navbar from "./Navbar";
+import Landing from "./pages/Landing";
+import About from "./pages/About";
+import Events from "./pages/Events";
+
+import { isMobile } from "react-device-detect";
+import MobilePage from "./pages/MobilePage";
+import Footer from "./Footer";
+import Gallery from "./pages/Gallery";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [landing, setLanding] = useState(true);
+
+    const [login, setLogin] = useState(false);
+    console.log(landing);
+
+    return (
+        <>
+            {isMobile ? (
+                <MobilePage />
+            ) : (
+                <div className="App">
+                    <Navbar
+                        landing={landing}
+                        login={login}
+                        setLogin={setLogin}
+                    />
+
+                    <Routes>
+                        <Route
+                            path="/pages/Gallery"
+                            element={
+                                <Gallery
+                                    setLanding={setLanding}
+                                    login={login}
+                                />
+                            }
+                        />
+
+                        <Route
+                            path="/pages/About"
+                            element={<About setLanding={setLanding} />}
+                        />
+
+                        <Route
+                            path="/pages/Events"
+                            element={<Events setLanding={setLanding} />}
+                        />
+
+                        <Route
+                            path="/"
+                            element={<Landing setLanding={setLanding} />}
+                        />
+                    </Routes>
+                    <Footer />
+                </div>
+            )}
+        </>
+    );
 }
 
 export default App;
