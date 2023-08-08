@@ -21,7 +21,6 @@ function Landing({ setLanding }) {
             <Flex className="overlay" justify="center">
                 <Text
                     fontSize="50px"
-                    fontFamily="Ubuntu"
                     textShadow="0 3px #000000"
                     color="white"
                     position="absolute"
@@ -38,7 +37,7 @@ function Landing({ setLanding }) {
                 paddingTop="70px"
                 paddingBottom="70px"
             >
-                <Text fontSize="18px" fontFamily="Ubuntu" color="Black">
+                <Text fontSize="18px" color="Black" textAlign="justify">
                     The Harvard College Korean International Students
                     Association (HCKISA) is a student-run organization that
                     brings together undergraduates who identify as Korean
@@ -52,7 +51,7 @@ function Landing({ setLanding }) {
                 </Text>
                 <br />
                 <br />
-                <Text fontSize="18px" color="Black">
+                <Text fontSize="18px" color="Black" textAlign="justify">
                     저희 HCKISA는 하버드 대학교의 학생 운영 한인회 입니다.
                     저희는 대학을 위해 지구 반대편까지 여행한 우리 회원들에게
                     고향과 공동체 의식을 제공하는 것을 목적으로 하고 있습니다.

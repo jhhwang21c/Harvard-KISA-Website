@@ -1,0 +1,8 @@
+@font-face {
+    font-family: "Avenir";
+    src: url("./assets/AvenirLTStd-Book.otf");
+  }
+
+.App {
+    font-family: "Avenir";
+}

@@ -33,8 +33,8 @@ function Landing({ setLanding }) {
     return (
         <Flex align="center" width="100%" flexDirection="column">
             <Box
-                borderBottom="1px"
-                borderColor="#a9a9a9"
+                // borderBottom="1px"
+                // borderColor="#a9a9a9"
                 height="100px"
                 width="100vw"
             />
@@ -43,7 +43,7 @@ function Landing({ setLanding }) {
                 align="center"
                 flexDirection="column"
                 width="70vw"
-                marginTop="calc(12vh - 20px)"
+                marginTop="calc(12vh - 40px)"
                 paddingBottom="8vh"
             >
                 <Text fontSize="4.5vh" color="Black" marginBottom="30px">

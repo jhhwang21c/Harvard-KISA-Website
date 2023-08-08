@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 
 export default function Events({ setLanding }) {
     const apiKey = process.env.REACT_APP_CAL_API_KEY;
-    console.log(apiKey);
 
     useEffect(() => {
         setLanding(false);
@@ -17,8 +16,8 @@ export default function Events({ setLanding }) {
     return (
         <Flex align="center" width="100%" flexDirection="column">
             <Box
-                borderBottom="1px"
-                borderColor="#a9a9a9"
+                // borderBottom="1px"
+                // borderColor="#a9a9a9"
                 height="100px"
                 width="100vw"
             />

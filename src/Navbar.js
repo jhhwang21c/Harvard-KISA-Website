@@ -31,17 +31,29 @@ import { useState } from "react";
 function Navbar({ landing, login, setLogin }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [inputs, setInputs] = useState({
+        email: "",
+        password: "",
+    });
 
-    const handleInputChange1 = (e) => setEmail(e.target.value);
-    const handleInputChange2 = (e) => setPassword(e.target.value);
+    const { email, password } = inputs; //inputs 객체 비구조화 할당
+
+    const handleInputChange = (e) => {
+        setInputs({ ...inputs, [e.target.name]: e.target.value });
+    };
+
+    const handleOnKeyPress = (e) => {
+        if (e.key === "Enter") {
+            tryLogin(email, password); // Enter 입력이 되면 클릭 이벤트 실행
+        }
+    };
 
     const tryLogin = async (email, password) => {
         try {
             await loginEmail(email, password);
             setLogin(() => true);
             onClose();
+            setInputs({ email: "", password: "" });
             alert("login success");
         } catch (err) {
             alert("wrong id/password");
@@ -62,6 +74,11 @@ function Navbar({ landing, login, setLogin }) {
                 backgroundColor="rgba(0,0,0,0)"
                 height="90px"
                 marginTop="6px"
+                style={{
+                    boxShadow: landing
+                        ? "0 0 0 0 rgba(0,0,0,0)"
+                        : "0 2px 2px 0 rgba(0,0,0,0.3)",
+                }}
             >
                 {/* left side */}
 
@@ -155,19 +172,24 @@ function Navbar({ landing, login, setLogin }) {
                                 <FormControl isRequired>
                                     <FormLabel>Email</FormLabel>
                                     <Input
+                                        id="email"
                                         placeholder="email"
                                         type="email"
+                                        name="email"
                                         value={email}
-                                        onChange={handleInputChange1}
+                                        onChange={handleInputChange}
                                     />
                                     <FormLabel marginTop="10px">
                                         Password
                                     </FormLabel>
                                     <Input
+                                        id="pw"
                                         placeholder="password"
                                         type="password"
+                                        name="password"
                                         value={password}
-                                        onChange={handleInputChange2}
+                                        onChange={handleInputChange}
+                                        onKeyDown={handleOnKeyPress}
                                     />
                                 </FormControl>
                             </ModalBody>

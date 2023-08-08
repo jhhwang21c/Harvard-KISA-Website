@@ -17,7 +17,6 @@ function App() {
     const [landing, setLanding] = useState(true);
 
     const [login, setLogin] = useState(false);
-    console.log(landing);
 
     return (
         <>
