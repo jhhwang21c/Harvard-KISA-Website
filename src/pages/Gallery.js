@@ -1,10 +1,17 @@
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import {
+    getDownloadURL,
+    ref,
+    uploadBytesResumable,
+    deleteObject,
+} from "firebase/storage";
+import {
+    doc,
     addDoc,
     collection,
     getDocs,
     orderBy,
     query,
+    deleteDoc,
 } from "firebase/firestore";
 import { db, storage, app } from "../firebase-config";
 
@@ -66,11 +73,12 @@ function Gallery({ setLanding, login }) {
     }, []);
 
     //firebase create
-    const imageLink = async (link) => {
+    const imageData = async (downloadURL, storageRef) => {
         await addDoc(galleryRef, {
-            image_link: link,
-            title: inputs.title,
-            timestamp: inputs.date,
+            image_link: downloadURL,
+            title: title, //inputs.title
+            timestamp: date,
+            ref: storageRef,
         });
         fetchImages();
         setProgresspercent(() => 0);
@@ -100,10 +108,30 @@ function Gallery({ setLanding, login }) {
             },
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    imageLink(downloadURL);
+                    imageData(downloadURL, `gallery/${file.name}`);
                 });
             }
         );
+    };
+
+    const handleDelete = async (storageRef, dbID) => {
+        const deleteRef = ref(storage, storageRef);
+        await deleteObject(deleteRef)
+            .then(() => {
+                alert("deleted");
+            })
+            .catch((error) => {
+                alert(error);
+            });
+
+        await deleteDoc(doc(db, "gallery", dbID))
+            .then(() => {
+                console.log("Document successfully deleted!");
+                fetchImages();
+            })
+            .catch((error) => {
+                alert("Error removing document: ", error);
+            });
     };
 
     function ImageTile(image) {
@@ -124,6 +152,21 @@ function Gallery({ setLanding, login }) {
                     </a>
                     <Text>{image.data.timestamp}</Text>
                     <Text>{image.data.title}</Text>
+                    {login ? (
+                        <Button
+                            width="80px"
+                            height="20px"
+                            fontSize="10px"
+                            color="red"
+                            onClick={() =>
+                                handleDelete(image.data.ref, image.data.id)
+                            }
+                        >
+                            Delete
+                        </Button>
+                    ) : (
+                        <></>
+                    )}
                 </Flex>
             </Box>
         );
