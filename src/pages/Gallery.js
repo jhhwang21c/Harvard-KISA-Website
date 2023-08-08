@@ -218,7 +218,7 @@ function Gallery({ setLanding, login }) {
                                             Title
                                         </FormLabel>
                                         <Input
-                                            placeholder="yyyy/mm/dd   ~~event "
+                                            placeholder="event title"
                                             value={title}
                                             name="title"
                                             onChange={handleInputChange}

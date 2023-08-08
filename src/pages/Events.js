@@ -33,6 +33,13 @@ export default function Events({ setLanding }) {
                     eventTextColor={"#FFF"}
                     eventColor={"#F2921D"}
                     height={"80vh"}
+                    eventClick={function (info) {
+                        info.jsEvent.preventDefault(); // don't let the browser navigate
+
+                        if (info.event.url) {
+                            window.open(info.event.url);
+                        }
+                    }}
                 />
             </Box>
         </Flex>
