@@ -50,6 +50,16 @@ function Landing({ setLanding }) {
                     around the Boston area to support the academic, social, and
                     professional development of our community members.
                 </Text>
+                <br />
+                <br />
+                <Text fontSize="18px" color="Black">
+                    저희 HCKISA는 하버드 대학교의 학생 운영 한인회 입니다.
+                    저희는 대학을 위해 지구 반대편까지 여행한 우리 회원들에게
+                    고향과 공동체 의식을 제공하는 것을 목적으로 하고 있습니다.
+                    저희는 영화 상영, 스터디 브레이크, 리크루팅 이벤트, 다른
+                    한인회와의 교류 행사 등의 다양한 이벤트를 개최하여 저희
+                    구성원들의 학문적, 사회적, 전문적인 발전을 지원합니다.
+                </Text>
             </Flex>
             <Text fontSize="40px" fontFamily="Ubuntu" color="black">
                 Our Sponsors

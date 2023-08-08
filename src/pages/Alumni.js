@@ -23,9 +23,8 @@ import {
     Input,
 } from "@chakra-ui/react";
 
-function Gallery({ setLanding, login }) {
-    const [progresspercent, setProgresspercent] = useState(0);
-    const [images, setImages] = useState([]);
+function Alumni({ setLanding, login }) {
+    const [alumni, setAlumni] = useState([]);
 
     const galleryRef = collection(db, "gallery");
 
@@ -36,13 +35,13 @@ function Gallery({ setLanding, login }) {
     });
 
     //load 기존 이미지
-    async function fetchImages() {
+    async function fetchAlumni() {
         const result = await getDocs(query(galleryRef, orderBy("timestamp")));
-        setImages(result.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setAlumni(result.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
 
     useEffect(() => {
-        fetchImages();
+        fetchAlumni();
     }, []);
 
     //firebase create
@@ -51,7 +50,7 @@ function Gallery({ setLanding, login }) {
             image_link: link,
             timestamp: new_date.getTime(),
         });
-        fetchImages();
+        fetchAlumni();
         setProgresspercent(() => 0);
     };
 
@@ -137,13 +136,13 @@ function Gallery({ setLanding, login }) {
                     <></>
                 )}
 
-                {images.length > 0 ? (
+                {alumni.length > 0 ? (
                     <SimpleGrid
                         minChildWidth="200px"
                         spacing="30px"
                         width="100%"
                     >
-                        {images.map((image, index) => {
+                        {alumni.map((image, index) => {
                             return <ImageTile data={image} key={index} />;
                         })}
                     </SimpleGrid>
@@ -154,4 +153,4 @@ function Gallery({ setLanding, login }) {
         </Flex>
     );
 }
-export default Gallery;
+export default Alumni;
