@@ -3,6 +3,10 @@ import { Flex, Text, Image, SimpleGrid } from "@chakra-ui/react";
 import "./Landing.css";
 
 import Hanwha from "../assets/hanwha.png";
+import Background1 from "../assets/background1.jpeg";
+// import Background2 from "../assets/background2.jpeg";
+// import Background3 from "../assets/background3.jpeg";
+// import Background4 from "../assets/background4.jpeg";
 
 import { useState, useEffect } from "react";
 
@@ -11,6 +15,22 @@ function Landing({ setLanding }) {
         setLanding(true);
     });
 
+    /* 
+    useEffect(() => {
+    const [background, setBackground] = useState("");
+    const landingRef = doc(db, "landing", "background");
+        const getData = async () => {
+            const docSnap = await getDoc(landingRef);
+            if (docSnap.exists()) {
+                setBackground(docSnap.data().image_link);
+            } else {
+                console.log("No such document!");
+            }
+        };
+        getData();
+    }, []);
+    */
+
     return (
         <Flex
             justify="center"
@@ -18,7 +38,11 @@ function Landing({ setLanding }) {
             width="100%"
             flexDirection="column"
         >
-            <Flex className="overlay" justify="center">
+            <Flex
+                className="overlay"
+                justify="center"
+                backgroundImage={Background1}
+            >
                 <Text
                     fontSize="50px"
                     textShadow="0 3px #000000"

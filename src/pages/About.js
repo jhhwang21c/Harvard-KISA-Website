@@ -1,34 +1,195 @@
-import { Box, Button, Flex, Text, Image, SimpleGrid } from "@chakra-ui/react";
+import {
+    getDownloadURL,
+    ref,
+    uploadBytesResumable,
+    deleteObject,
+} from "firebase/storage";
+import {
+    doc,
+    addDoc,
+    collection,
+    getDocs,
+    orderBy,
+    query,
+    deleteDoc,
+} from "firebase/firestore";
+import { db, storage, app } from "../firebase-config";
 
-import { useState, useEffect, useId } from "react";
-import "./Landing.css";
+import { useState, useEffect, useRef, useId } from "react";
 
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { db, storage } from "../firebase-config";
+import {
+    Box,
+    Button,
+    Flex,
+    Text,
+    Image,
+    SimpleGrid,
+    Center,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
+    Input,
+    FormControl,
+    FormLabel,
+    Select,
+} from "@chakra-ui/react";
 
-function Landing({ setLanding }) {
+function About({ setLanding, login }) {
     useEffect(() => {
         setLanding(false);
     });
 
+    const modal1 = useDisclosure();
+
     const [board, setBoard] = useState([]);
-    const [load, setLoad] = useState(false);
+
+    const [progresspercent, setProgresspercent] = useState(0);
+
+    const [inputs, setInputs] = useState({
+        name: "",
+        position: "",
+        year: "",
+        bio: "",
+        grid_position: "",
+    });
+    const { name, position, year, bio, grid_position } = inputs; //inputs 객체 비구조화 할당
+
+    const handleInputChange = (e) => {
+        setInputs({ ...inputs, [e.target.name]: e.target.value });
+    };
 
     const usersCollectionRef = collection(db, "board");
 
-    const uniqueId = useId();
+    //load 기존 data
+    async function getData() {
+        // getDocs로 컬렉션안에 데이터 가져오기
+        const data = await getDocs(
+            query(usersCollectionRef, orderBy("grid_position"))
+        );
+        setBoard(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    }
 
     useEffect(() => {
-        // 비동기로 데이터 받을준비
-        const getData = async () => {
-            // getDocs로 컬렉션안에 데이터 가져오기
-            const data = await getDocs(usersCollectionRef);
-            setBoard(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            setLoad(true);
-        };
-
         getData();
     }, []);
+
+    const memberData = async (downloadURL, storageRef) => {
+        await addDoc(usersCollectionRef, {
+            image_link: downloadURL,
+            name: name, //inputs.title
+            position: position,
+            year: year,
+            bio: bio,
+            grid_position: Number(grid_position),
+            ref: storageRef,
+        });
+        getData();
+        setInputs({
+            name: "",
+            position: "",
+            year: "",
+            bio: "",
+            grid_position: "",
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const file = e.target[0]?.files[0];
+        if (!file) return;
+        const storageRef = ref(storage, `board/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                const progress = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                );
+
+                modal1.onClose(); //modal function
+                setProgresspercent(progress);
+            },
+            (error) => {
+                modal1.onClose(); //modal function
+                alert(error);
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    memberData(downloadURL, `board/${file.name}`);
+                });
+            }
+        );
+    };
+
+    const handleDelete = async (storageRef, dbID) => {
+        const deleteRef = ref(storage, storageRef);
+        await deleteObject(deleteRef)
+            .then(() => {
+                alert("deleted");
+            })
+            .catch((error) => {
+                alert(error);
+            });
+
+        await deleteDoc(doc(db, "board", dbID))
+            .then(() => {
+                console.log("Document successfully deleted!");
+                getData();
+            })
+            .catch((error) => {
+                alert("Error removing document: ", error);
+            });
+    };
+
+    function MemberTile(member) {
+        return (
+            <Box bg="" width="16vw" align="center" margin="2%">
+                <Image
+                    borderRadius="full"
+                    boxSize="14vw"
+                    src={member.data.image_link}
+                    fallbackSrc="https://via.placeholder.com/200"
+                    alt="picture"
+                    marginBottom="5px"
+                    objectFit="cover"
+                />
+                <Text as="b" fontSize="2xl" alt="name">
+                    {member.data.name}
+                </Text>
+                <Text fontSize="lg" alt="position">
+                    {member.data.position}
+                </Text>
+                <Text fontSize="lg" alt="year">
+                    {member.data.year}
+                </Text>
+                <Text fontSize="lg" alt="bio" as="i">
+                    "{member.data.bio}"
+                </Text>
+                <br />
+                {login ? (
+                    <Button
+                        width="60px"
+                        height="20px"
+                        fontSize="10px"
+                        color="red"
+                        onClick={() =>
+                            handleDelete(member.data.ref, member.data.id)
+                        }
+                    >
+                        Delete
+                    </Button>
+                ) : (
+                    <></>
+                )}
+            </Box>
+        );
+    }
 
     return (
         <Flex align="center" width="100%" flexDirection="column">
@@ -43,172 +204,125 @@ function Landing({ setLanding }) {
                 align="center"
                 flexDirection="column"
                 width="70vw"
-                marginTop="calc(12vh - 40px)"
-                paddingBottom="8vh"
+                marginTop="80px"
+                paddingBottom="60px"
             >
-                <Text fontSize="4.5vh" color="Black" marginBottom="30px">
+                <Text fontSize="40px" color="Black" marginBottom="30px">
                     2023-2024 Board Members
                 </Text>
-                <SimpleGrid
-                    columns={3}
-                    spacingX="7vw"
-                    spacingY="6vh"
-                    width="100%"
-                    border="1px"
-                    borderRadius="50px"
-                    padding="30px"
-                >
-                    {/* co-president 1 */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[0].picture : ""}
-                            fallbackSrc="https://via.placeholder.com/200"
-                            alt="President"
-                            marginBottom="5px"
-                            objectFit="cover"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Co-President
-                        </Text>
-                        <Text fontSize="1.3vw" alt="co-president">
-                            {load ? board[0].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="co-president">
-                            {load ? board[0].year : "class of"}
-                        </Text>
-                    </Box>
-                    {/* co-president 2 */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[1].picture : ""}
-                            alt="President"
-                            marginBottom="5px"
-                            objectFit="cover"
-                            fallbackSrc="https://via.placeholder.com/200"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Co-President
-                        </Text>
-                        <Text fontSize="1.3vw" alt="co-president">
-                            {load ? board[1].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="co-president">
-                            {load ? board[1].year : "class of"}
-                        </Text>
-                    </Box>
-                    {/* secretary */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[4].picture : ""}
-                            alt="secretary"
-                            marginBottom="5px"
-                            objectFit="cover"
-                            fallbackSrc="https://via.placeholder.com/200"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Secretary
-                        </Text>
-                        <Text fontSize="1.3vw" alt="Secretary">
-                            {load ? board[4].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="Secretary">
-                            {load ? board[4].year : "class of"}
-                        </Text>
-                    </Box>
-                    {/* social chair 1 */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[5].picture : ""}
-                            alt="social1"
-                            marginBottom="5px"
-                            objectFit="cover"
-                            fallbackSrc="https://via.placeholder.com/200"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Social Chair
-                        </Text>
-                        <Text fontSize="1.3vw" alt="social chair">
-                            {load ? board[5].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="social chairt">
-                            {load ? board[5].year : "class of"}
-                        </Text>
-                    </Box>
-                    {/* social chair 2 */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[6].picture : ""}
-                            alt="social2"
-                            marginBottom="5px"
-                            objectFit="cover"
-                            fallbackSrc="https://via.placeholder.com/200"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Social Chair
-                        </Text>
-                        <Text fontSize="1.3vw" alt="social chair">
-                            {load ? board[6].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="social chair">
-                            {load ? board[6].year : "class of"}
-                        </Text>
-                    </Box>
-                    {/* finance chair */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[2].picture : ""}
-                            alt="finance"
-                            marginBottom="5px"
-                            objectFit="cover"
-                            fallbackSrc="https://via.placeholder.com/200"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Finance Chair
-                        </Text>
-                        <Text fontSize="1.3vw" alt="Finance Chair">
-                            {load ? board[2].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="Finance Chair">
-                            {load ? board[2].year : "class of"}
-                        </Text>
-                    </Box>
-                    {/* public relations chair */}
-                    <Box bg="" width="16vw" align="center" margin="2%">
-                        <Image
-                            borderRadius="full"
-                            boxSize="14vw"
-                            src={load ? board[3].picture : ""}
-                            alt="public relations"
-                            marginBottom="5px"
-                            objectFit="cover"
-                            fallbackSrc="https://via.placeholder.com/200"
-                        />
-                        <Text as="b" fontSize="1.5vw">
-                            Public Relations Chair
-                        </Text>
-                        <Text fontSize="1.3vw" alt="public relations chair">
-                            {load ? board[3].name : "name"}
-                        </Text>
-                        <Text fontSize="1.3vw" alt="public relations chair">
-                            {load ? board[3].year : "class of"}
-                        </Text>
-                    </Box>
-                </SimpleGrid>
+                {login ? (
+                    //이미지 업로드 modal
+                    <>
+                        <Flex marginBottom="40px">
+                            <Button
+                                onClick={modal1.onOpen}
+                                colorScheme="teal"
+                                mr={3}
+                            >
+                                Add Member
+                            </Button>
+                            <Text>{progresspercent}%</Text>
+                        </Flex>
+
+                        <Modal isOpen={modal1.isOpen} onClose={modal1.onClose}>
+                            <ModalOverlay />
+                            <ModalContent>
+                                <ModalHeader>Add Member</ModalHeader>
+                                <ModalCloseButton />
+                                <form onSubmit={handleSubmit}>
+                                    <ModalBody>
+                                        <FormLabel>
+                                            Choose Profile Image
+                                        </FormLabel>
+                                        <input type="file" accept="image/*" />
+                                        <FormLabel marginTop="10px">
+                                            Name
+                                        </FormLabel>
+                                        <Input
+                                            placeholder="Name"
+                                            value={name}
+                                            name="name"
+                                            onChange={handleInputChange}
+                                        />
+                                        <FormLabel marginTop="10px">
+                                            Position
+                                        </FormLabel>
+                                        <Input
+                                            placeholder="Position"
+                                            value={position}
+                                            name="position"
+                                            onChange={handleInputChange}
+                                        />
+                                        <FormLabel marginTop="10px">
+                                            Year
+                                        </FormLabel>
+                                        <Input
+                                            placeholder="class of '00"
+                                            value={year}
+                                            name="year"
+                                            onChange={handleInputChange}
+                                        />
+                                        <FormLabel marginTop="10px">
+                                            Bio
+                                        </FormLabel>
+                                        <Input
+                                            placeholder="Bio"
+                                            value={bio}
+                                            name="bio"
+                                            onChange={handleInputChange}
+                                        />
+                                        <FormLabel marginTop="10px">
+                                            Grid Position. Numbers only. Top to
+                                            bottom, left to right in increasing
+                                            order.
+                                        </FormLabel>
+                                        <Input
+                                            placeholder="Grid Position. Numbers only"
+                                            value={grid_position}
+                                            type="number"
+                                            name="grid_position"
+                                            onChange={handleInputChange}
+                                        />
+                                    </ModalBody>
+
+                                    <ModalFooter>
+                                        <Button
+                                            type="submit"
+                                            marginLeft="20px"
+                                            colorScheme="teal"
+                                            mr={3}
+                                        >
+                                            Upload
+                                        </Button>
+                                    </ModalFooter>
+                                </form>
+                            </ModalContent>
+                        </Modal>
+                    </>
+                ) : (
+                    <></>
+                )}
+
+                {board.length > 0 ? (
+                    <SimpleGrid
+                        columns={3}
+                        spacingX="7vw"
+                        spacingY="6vh"
+                        width="100%"
+                        border="1px"
+                        borderRadius="50px"
+                        padding="30px"
+                    >
+                        {board.map((member, index) => {
+                            return <MemberTile data={member} key={index} />;
+                        })}
+                    </SimpleGrid>
+                ) : (
+                    <>No member</>
+                )}
             </Flex>
         </Flex>
     );
 }
 
-export default Landing;
+export default About;

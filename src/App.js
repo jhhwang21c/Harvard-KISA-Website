@@ -43,7 +43,9 @@ function App() {
 
                         <Route
                             path="/pages/About"
-                            element={<About setLanding={setLanding} />}
+                            element={
+                                <About setLanding={setLanding} login={login} />
+                            }
                         />
 
                         <Route
