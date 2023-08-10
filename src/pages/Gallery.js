@@ -180,7 +180,7 @@ function Gallery({ setLanding, login }) {
                 align="center"
                 flexDirection="column"
                 width="80vw"
-                marginTop="calc(12vh - 20px)"
+                marginTop="80px"
                 paddingBottom="8vh"
             >
                 {login ? (
