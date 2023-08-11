@@ -149,28 +149,26 @@ function About({ setLanding, login }) {
 
     function MemberTile(member) {
         return (
-            <Box bg="" width="16vw" align="center" margin="2%">
+            <Flex bg="" direction="column" align="center" margin="2%">
                 <Image
                     borderRadius="full"
                     boxSize="14vw"
                     src={member.data.image_link}
-                    fallbackSrc="https://via.placeholder.com/200"
                     alt="picture"
-                    marginBottom="5px"
+                    marginBottom="10px"
                     objectFit="cover"
                 />
-                <Text as="b" fontSize="2xl" alt="name">
-                    {member.data.name}
-                </Text>
-                <Text fontSize="lg" alt="position">
-                    {member.data.position}
+                <Text as="b" fontSize="xl" alt="name & position">
+                    {member.data.name} | {member.data.position}
                 </Text>
                 <Text fontSize="lg" alt="year">
                     {member.data.year}
                 </Text>
-                <Text fontSize="lg" alt="bio" as="i">
-                    "{member.data.bio}"
-                </Text>
+                <Box marginTop="10px" width="75%" align="center">
+                    <Text fontSize="lg" alt="bio" as="i">
+                        {member.data.bio}
+                    </Text>
+                </Box>
                 <br />
                 {login ? (
                     <Button
@@ -187,7 +185,7 @@ function About({ setLanding, login }) {
                 ) : (
                     <></>
                 )}
-            </Box>
+            </Flex>
         );
     }
 
@@ -306,8 +304,8 @@ function About({ setLanding, login }) {
                 {board.length > 0 ? (
                     <SimpleGrid
                         columns={3}
-                        spacingX="7vw"
-                        spacingY="6vh"
+                        spacingX="25px"
+                        spacingY="20px"
                         width="100%"
                         border="1px"
                         borderRadius="50px"
