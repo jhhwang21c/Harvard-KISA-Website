@@ -10,6 +10,7 @@ import Events from "./pages/Events";
 
 import Footer from "./Footer";
 import Gallery from "./pages/Gallery";
+import NotFound from "./NotFound";
 
 function App() {
     const [landing, setLanding] = useState(true);
@@ -37,6 +38,10 @@ function App() {
                 />
 
                 <Route path="/" element={<Landing setLanding={setLanding} />} />
+                <Route
+                    path={"*"}
+                    element={<NotFound setLanding={setLanding} />}
+                />
             </Routes>
             <Footer />
         </div>
