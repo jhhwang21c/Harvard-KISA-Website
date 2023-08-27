@@ -8,8 +8,6 @@ import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Events from "./pages/Events";
 
-import MobilePage from "./pages/MobilePage";
-
 import Footer from "./Footer";
 import Gallery from "./pages/Gallery";
 
