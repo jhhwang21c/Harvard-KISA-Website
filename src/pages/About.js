@@ -38,6 +38,7 @@ import {
     FormLabel,
     Select,
 } from "@chakra-ui/react";
+import { MobileView, BrowserView, isMobile } from "react-device-detect";
 
 function About({ setLanding, login }) {
     useEffect(() => {
@@ -149,26 +150,54 @@ function About({ setLanding, login }) {
 
     function MemberTile(member) {
         return (
-            <Flex bg="" direction="column" align="center" margin="2%">
-                <Image
-                    borderRadius="full"
-                    boxSize="14vw"
-                    src={member.data.image_link}
-                    alt="picture"
-                    marginBottom="10px"
-                    objectFit="cover"
-                />
-                <Text as="b" fontSize="xl" alt="name & position">
-                    {member.data.name} | {member.data.position}
-                </Text>
+            <Flex bg="" direction="column" align="center" margin="1%">
+                {isMobile ? (
+                    <Image
+                        borderRadius="full"
+                        boxSize="30vw"
+                        src={member.data.image_link}
+                        alt="picture"
+                        marginBottom="10px"
+                        objectFit="cover"
+                    />
+                ) : (
+                    <Image
+                        borderRadius="full"
+                        boxSize="14vw"
+                        src={member.data.image_link}
+                        alt="picture"
+                        marginBottom="10px"
+                        objectFit="cover"
+                    />
+                )}
+                {isMobile ? (
+                    <>
+                        <Text as="b" fontSize="xl" alt="name & position">
+                            {member.data.name}
+                        </Text>
+                        <Text as="b" fontSize="xl" alt="name & position">
+                            {member.data.position}
+                        </Text>
+                    </>
+                ) : (
+                    <Text as="b" fontSize="xl" alt="name & position">
+                        {member.data.name} | {member.data.position}
+                    </Text>
+                )}
+
                 <Text fontSize="lg" alt="year">
                     {member.data.year}
                 </Text>
-                <Box marginTop="10px" width="75%" align="center">
-                    <Text fontSize="lg" alt="bio" as="i">
-                        {member.data.bio}
-                    </Text>
-                </Box>
+                {isMobile ? (
+                    <></>
+                ) : (
+                    <Box marginTop="10px" width="75%" align="center">
+                        <Text fontSize="lg" alt="bio" as="i">
+                            {member.data.bio}
+                        </Text>
+                    </Box>
+                )}
+
                 <br />
                 {login ? (
                     <Button
@@ -190,136 +219,182 @@ function About({ setLanding, login }) {
     }
 
     return (
-        <Flex align="center" width="100%" flexDirection="column">
-            <Box
-                // borderBottom="1px"
-                // borderColor="#a9a9a9"
-                height="100px"
-                width="100vw"
-            />
-            <Flex
-                justify="center"
-                align="center"
-                flexDirection="column"
-                width="70vw"
-                marginTop="80px"
-                paddingBottom="60px"
-            >
-                <Text fontSize="40px" color="Black" marginBottom="30px">
-                    2023-2024 Board Members
-                </Text>
-                {login ? (
-                    //이미지 업로드 modal
-                    <>
-                        <Flex marginBottom="40px">
-                            <Button
-                                onClick={modal1.onOpen}
-                                colorScheme="teal"
-                                mr={3}
-                            >
-                                Add Member
-                            </Button>
-                            <Text>{progresspercent}%</Text>
-                        </Flex>
-
-                        <Modal isOpen={modal1.isOpen} onClose={modal1.onClose}>
-                            <ModalOverlay />
-                            <ModalContent>
-                                <ModalHeader>Add Member</ModalHeader>
-                                <ModalCloseButton />
-                                <form onSubmit={handleSubmit}>
-                                    <ModalBody>
-                                        <FormLabel>
-                                            Choose Profile Image
-                                        </FormLabel>
-                                        <input type="file" accept="image/*" />
-                                        <FormLabel marginTop="10px">
-                                            Name
-                                        </FormLabel>
-                                        <Input
-                                            placeholder="Name"
-                                            value={name}
-                                            name="name"
-                                            onChange={handleInputChange}
-                                        />
-                                        <FormLabel marginTop="10px">
-                                            Position
-                                        </FormLabel>
-                                        <Input
-                                            placeholder="Position"
-                                            value={position}
-                                            name="position"
-                                            onChange={handleInputChange}
-                                        />
-                                        <FormLabel marginTop="10px">
-                                            Year
-                                        </FormLabel>
-                                        <Input
-                                            placeholder="class of '00"
-                                            value={year}
-                                            name="year"
-                                            onChange={handleInputChange}
-                                        />
-                                        <FormLabel marginTop="10px">
-                                            Bio
-                                        </FormLabel>
-                                        <Input
-                                            placeholder="Bio"
-                                            value={bio}
-                                            name="bio"
-                                            onChange={handleInputChange}
-                                        />
-                                        <FormLabel marginTop="10px">
-                                            Grid Position. Numbers only. Top to
-                                            bottom, left to right in increasing
-                                            order.
-                                        </FormLabel>
-                                        <Input
-                                            placeholder="Grid Position. Numbers only"
-                                            value={grid_position}
-                                            type="number"
-                                            name="grid_position"
-                                            onChange={handleInputChange}
-                                        />
-                                    </ModalBody>
-
-                                    <ModalFooter>
-                                        <Button
-                                            type="submit"
-                                            marginLeft="20px"
-                                            colorScheme="teal"
-                                            mr={3}
-                                        >
-                                            Upload
-                                        </Button>
-                                    </ModalFooter>
-                                </form>
-                            </ModalContent>
-                        </Modal>
-                    </>
-                ) : (
-                    <></>
-                )}
-
-                {board.length > 0 ? (
-                    <SimpleGrid
-                        columns={3}
-                        spacingX="25px"
-                        spacingY="20px"
-                        width="100%"
-                        border="1px"
-                        borderRadius="50px"
-                        padding="30px"
+        <>
+            <MobileView>
+                <Flex align="center" width="100%" flexDirection="column">
+                    <Flex
+                        justify="center"
+                        align="center"
+                        flexDirection="column"
+                        width="85vw"
+                        marginTop="120px"
+                        paddingBottom="10px"
                     >
-                        {board.map((member, index) => {
-                            return <MemberTile data={member} key={index} />;
-                        })}
-                    </SimpleGrid>
-                ) : (
-                    <>No member</>
-                )}
-            </Flex>
-        </Flex>
+                        <Text fontSize="2xl" color="Black" marginBottom="20px">
+                            2023-2024 Board Members
+                        </Text>
+
+                        {board.length > 0 ? (
+                            <SimpleGrid
+                                columns={2}
+                                spacingX="15px"
+                                spacingY="10px"
+                                width="100%"
+                                padding="5px"
+                            >
+                                {board.map((member, index) => {
+                                    return (
+                                        <MemberTile data={member} key={index} />
+                                    );
+                                })}
+                            </SimpleGrid>
+                        ) : (
+                            <>No member</>
+                        )}
+                    </Flex>
+                </Flex>
+            </MobileView>
+            <BrowserView>
+                <Flex align="center" width="100%" flexDirection="column">
+                    <Box
+                        // borderBottom="1px"
+                        // borderColor="#a9a9a9"
+                        height="100px"
+                        width="100vw"
+                    />
+                    <Flex
+                        justify="center"
+                        align="center"
+                        flexDirection="column"
+                        width="70vw"
+                        marginTop="80px"
+                        paddingBottom="60px"
+                    >
+                        <Text fontSize="40px" color="Black" marginBottom="30px">
+                            2023-2024 Board Members
+                        </Text>
+                        {login ? (
+                            //이미지 업로드 modal
+                            <>
+                                <Flex marginBottom="40px">
+                                    <Button
+                                        onClick={modal1.onOpen}
+                                        colorScheme="teal"
+                                        mr={3}
+                                    >
+                                        Add Member
+                                    </Button>
+                                    <Text>{progresspercent}%</Text>
+                                </Flex>
+
+                                <Modal
+                                    isOpen={modal1.isOpen}
+                                    onClose={modal1.onClose}
+                                >
+                                    <ModalOverlay />
+                                    <ModalContent>
+                                        <ModalHeader>Add Member</ModalHeader>
+                                        <ModalCloseButton />
+                                        <form onSubmit={handleSubmit}>
+                                            <ModalBody>
+                                                <FormLabel>
+                                                    Choose Profile Image
+                                                </FormLabel>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                />
+                                                <FormLabel marginTop="10px">
+                                                    Name
+                                                </FormLabel>
+                                                <Input
+                                                    placeholder="Name"
+                                                    value={name}
+                                                    name="name"
+                                                    onChange={handleInputChange}
+                                                />
+                                                <FormLabel marginTop="10px">
+                                                    Position
+                                                </FormLabel>
+                                                <Input
+                                                    placeholder="Position"
+                                                    value={position}
+                                                    name="position"
+                                                    onChange={handleInputChange}
+                                                />
+                                                <FormLabel marginTop="10px">
+                                                    Year
+                                                </FormLabel>
+                                                <Input
+                                                    placeholder="class of '00"
+                                                    value={year}
+                                                    name="year"
+                                                    onChange={handleInputChange}
+                                                />
+                                                <FormLabel marginTop="10px">
+                                                    Bio
+                                                </FormLabel>
+                                                <Input
+                                                    placeholder="Bio"
+                                                    value={bio}
+                                                    name="bio"
+                                                    onChange={handleInputChange}
+                                                />
+                                                <FormLabel marginTop="10px">
+                                                    Grid Position. Numbers only.
+                                                    Top to bottom, left to right
+                                                    in increasing order.
+                                                </FormLabel>
+                                                <Input
+                                                    placeholder="Grid Position. Numbers only"
+                                                    value={grid_position}
+                                                    type="number"
+                                                    name="grid_position"
+                                                    onChange={handleInputChange}
+                                                />
+                                            </ModalBody>
+
+                                            <ModalFooter>
+                                                <Button
+                                                    type="submit"
+                                                    marginLeft="20px"
+                                                    colorScheme="teal"
+                                                    mr={3}
+                                                >
+                                                    Upload
+                                                </Button>
+                                            </ModalFooter>
+                                        </form>
+                                    </ModalContent>
+                                </Modal>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+
+                        {board.length > 0 ? (
+                            <SimpleGrid
+                                columns={3}
+                                spacingX="25px"
+                                spacingY="20px"
+                                width="100%"
+                                border="1px"
+                                borderRadius="50px"
+                                padding="30px"
+                            >
+                                {board.map((member, index) => {
+                                    return (
+                                        <MemberTile data={member} key={index} />
+                                    );
+                                })}
+                            </SimpleGrid>
+                        ) : (
+                            <>No member</>
+                        )}
+                    </Flex>
+                </Flex>
+            </BrowserView>
+        </>
     );
 }
 
