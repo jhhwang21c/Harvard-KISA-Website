@@ -9,7 +9,12 @@
 }
 
 @media (pointer:coarse) {
-    .fc .fc-toolbar-title{
+    .fc .fc-toolbar-title {
         font-size: 20px;
     }
+    .fc .fc-button {
+        padding: 0.25em 0.35em
+
+    }
+
 }

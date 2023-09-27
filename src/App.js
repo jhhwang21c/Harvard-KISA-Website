@@ -23,17 +23,17 @@ function App() {
 
             <Routes>
                 <Route
-                    path="/pages/Gallery"
+                    path="/Gallery"
                     element={<Gallery setLanding={setLanding} login={login} />}
                 />
 
                 <Route
-                    path="/pages/About"
+                    path="/About"
                     element={<About setLanding={setLanding} login={login} />}
                 />
 
                 <Route
-                    path="/pages/Events"
+                    path="/Events"
                     element={<Events setLanding={setLanding} />}
                 />
 

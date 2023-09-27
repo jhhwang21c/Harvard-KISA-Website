@@ -142,7 +142,7 @@ function Navbar({ landing, login, setLogin }) {
                                 <DrawerBody>
                                     <VStack spacing="24px">
                                         <Link
-                                            to="/pages/About"
+                                            to="/About"
                                             onClick={onClose}
                                             style={{
                                                 textDecoration: "none",
@@ -153,7 +153,7 @@ function Navbar({ landing, login, setLogin }) {
                                             Team
                                         </Link>
                                         <Link
-                                            to="/pages/Events"
+                                            to="/Events"
                                             onClick={onClose}
                                             style={{
                                                 textDecoration: "none",
@@ -164,7 +164,7 @@ function Navbar({ landing, login, setLogin }) {
                                             Events
                                         </Link>
                                         <Link
-                                            to="/pages/Gallery"
+                                            to="/Gallery"
                                             onClick={onClose}
                                             style={{
                                                 textDecoration: "none",
@@ -202,7 +202,7 @@ function Navbar({ landing, login, setLogin }) {
                             <Link to="/" rel="noreferrer">
                                 <Image
                                     src={Logo}
-                                    boxSize="50px"
+                                    boxSize="60px"
                                     marginLeft="15px"
                                 />
                                 <Text
@@ -225,7 +225,7 @@ function Navbar({ landing, login, setLogin }) {
                         >
                             <Box margin="0 15px">
                                 <Link
-                                    to="/pages/About"
+                                    to="/About"
                                     style={{
                                         textDecoration: "none",
                                         color: landing ? "white" : "black",
@@ -238,7 +238,7 @@ function Navbar({ landing, login, setLogin }) {
                             <Spacer />
                             <Box margin="0 15px">
                                 <Link
-                                    to="/pages/Events"
+                                    to="/Events"
                                     style={{
                                         textDecoration: "none",
                                         color: landing ? "white" : "black",
@@ -251,7 +251,7 @@ function Navbar({ landing, login, setLogin }) {
                             <Spacer />
                             <Box margin="0 15px">
                                 <Link
-                                    to="/pages/Gallery"
+                                    to="/Gallery"
                                     style={{
                                         textDecoration: "none",
                                         color: landing ? "white" : "black",
